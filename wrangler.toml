@@ -1,6 +1,13 @@
 name = "biratdatta-tech"
+main = "worker.js"
 compatibility_date = "2026-09-01"
-pages_build_output_dir = "public"
+
+# The site itself: everything in public/ is served as static files.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "404-page"
+run_worker_first = ["/api/*"]
 
 [[d1_databases]]
 binding = "DB"

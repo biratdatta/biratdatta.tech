@@ -5,4 +5,4 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "biratdatta-guestbook"
-database_id = "PASTE-YOUR-D1-DATABASE-ID-HERE"
+database_id = "fc9434f1-6bbb-4c13-ae3e-52cd1c1827ef"

@@ -1,0 +1,8 @@
+name = "biratdatta-tech"
+compatibility_date = "2026-09-01"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "biratdatta-guestbook"
+database_id = "PASTE-YOUR-D1-DATABASE-ID-HERE"

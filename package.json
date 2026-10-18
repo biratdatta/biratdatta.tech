@@ -1,0 +1,14 @@
+{
+  "name": "biratdatta-tech",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev",
+    "db:init:local": "wrangler d1 execute biratdatta-guestbook --local --file=schema.sql",
+    "db:init": "wrangler d1 execute biratdatta-guestbook --remote --file=schema.sql",
+    "deploy": "wrangler pages deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

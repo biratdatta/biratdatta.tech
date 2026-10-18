@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://biratdatta.tech/">
 <meta property="og:title" content="Birat Datta · Things I Built">
-<meta property="og:description" content="A scrapbook of browser extensions, dev tools and open-source things — plus a pixel cricket game.">
+<meta property="og:description" content="A scrapbook of browser extensions, dev tools and open-source things — plus a pixel arcade with a new game every day.">
 <meta property="og:image" content="https://biratdatta.tech/media/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@biratdatta1">
@@ -44,6 +44,14 @@
   .top ul li:nth-child(odd) a:hover,.top ul li:nth-child(even) a:hover,.top ul a:focus-visible{transform:translate(-2px,-2px) rotate(0)}
   .top ul li a:active{transform:translate(1px,1px) rotate(0)}
 }
+
+.arcpick{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.arcpick button{all:unset;cursor:pointer;font:9px/1 "Press Start 2P",var(--mono);color:#ddd;background:#111;border:2px solid #444;padding:8px 10px;transition:transform .1s}
+.arcpick button:hover,.arcpick button:focus-visible{border-color:var(--yellow);color:#fff;transform:translateY(-1px)}
+.arcpick button.on{background:var(--yellow);color:#000;border-color:#000}
+.arcpick button em{font-style:normal;background:var(--red);color:#fff;padding:2px 4px;margin-left:4px;font-size:7px;vertical-align:1px}
+.arcpick button.shuf{margin-left:auto;border-style:dashed}
+@media(max-width:560px){.arcpick button{font-size:8px;padding:7px 8px}.arcpick button.shuf{margin-left:0}}
 </style>
 </head>
 <body>
@@ -854,13 +862,14 @@ button,a,.snap,.stk{-webkit-tap-highlight-color:transparent;touch-action:manipul
     <div class="more"><span class="hand">…and 80-something more experiments</span><a class="btn" href="https://github.com/biratdatta?tab=repositories" target="_blank">See all 89 repos →</a></div>
     <div class="nets" id="nets">
       <div class="nets-head">
-        <div><small>NETS SESSION · PIXEL CRICKET</small><h3>Face 12 balls. Score big.</h3><p>Tap the pitch (or press <b>Space</b>) to swing when the ball reaches the bat. Time it right for a six. Miss a straight one and you're bowled. 3 wickets, 2 overs.</p></div>
-        <div class="board8" aria-live="polite"><div><span>RUNS</span><b id="ckR">0/0</b></div><div><span>BALLS</span><b id="ckB">0/12</b></div><div><span>BEST</span><b id="ckBest">0</b></div></div>
+        <div><small id="arcTag">NETS SESSION · PIXEL CRICKET</small><h3 id="arcTitle">Face 12 balls. Score big.</h3><p id="arcHow">Tap to play.</p></div>
+        <div class="board8" aria-live="polite"><div><span id="ckL1">RUNS</span><b id="ckR">0/0</b></div><div><span id="ckL2">BALLS</span><b id="ckB">0/12</b></div><div><span>BEST</span><b id="ckBest">0</b></div></div>
       </div>
+      <div class="arcpick" id="arcPick" role="group" aria-label="Pick a game"></div>
       <div class="pitchwrap" id="ckWrap" tabindex="0" role="button" aria-label="Cricket game: tap or press space to swing">
         <canvas id="ck" width="192" height="96"></canvas>
         <div class="ckcall" id="ckCall"></div>
-        <div class="ckover" id="ckOver"><div class="ckpanel"><div class="ckt">PIXEL<br>CRICKET</div><p id="ckMsg">Tap to play</p><button class="ckbtn" id="ckStart" type="button">PLAY ▶</button></div></div>
+        <div class="ckover" id="ckOver"><div class="ckpanel"><div class="ckt" id="ckTitle">PIXEL<br>CRICKET</div><p id="ckMsg">Tap to play</p><button class="ckbtn" id="ckStart" type="button">PLAY ▶</button></div></div>
       </div>
       <div class="cklog" id="ckLog" aria-label="This over"></div>
     </div>
@@ -1191,6 +1200,7 @@ const EGGS=[
  ["jelly",matchMedia("(pointer:coarse)").matches?"Double-tap the big headline":"Double-click the big headline"],
  ["strike","Watch the bowling clip to the very end"],
  ["six","Hit a six in the nets"],
+ ["arcade","Play every game in the arcade"],
 ];
 let found=new Set();try{found=new Set(JSON.parse(localStorage.getItem("bd-eggs")||"[]"))}catch(e){}
 function drawEggs(){$("#eggn").textContent=found.size+"/"+EGGS.length;$("#hintl").innerHTML=EGGS.map(([k,h])=>`<li class="${found.has(k)?"got":""}">${found.has(k)?"✓":"?"} ${found.has(k)?h:h.replace(/./g,(c,i)=>i<14?c:"·").slice(0,40)}</li>`).join("")}
@@ -1345,7 +1355,7 @@ bv.addEventListener("ended",()=>{confetti(160);toast("STRIKE! (We'll go with tha
 })();
 
 /* ================= pixel cricket ================= */
-(function(){
+function makeCricket(){
  const cv=$("#ck"),g=cv.getContext("2d"),W=192,H=96,GY=80;
  const C={sky:"#7ec8ff",sky2:"#a9dcff",stand:"#5b4a8a",grass:"#3e9b6b",grass2:"#358a5e",pitch:"#d8b878",line:"#fff",skin:"#c98a5a",shirt:"#f6efe1",blue:"#2d5bd7",red:"#e5462f",wood:"#c8913c",ink:"#231f1a",ball:"#c0182a",yel:"#ffd23f"};
  const crowd=[];for(let i=0;i<190;i++)crowd.push([Math.random()*W|0,6+(Math.random()*16|0),["#ffd23f","#e5462f","#fff","#ff9ec4","#2d5bd7","#3e9b6b","#b9a6ff"][Math.random()*7|0]]);
@@ -1445,14 +1455,156 @@ bv.addEventListener("ended",()=>{confetti(160);toast("STRIKE! (We'll go with tha
   if(st==="result"&&now-tState>1300){if(wk>=3||balls>=12){end()}else{st="wait";tState=now;bails=null;fielder=null;swingAt=-1}}
   if(st!=="over"&&st!=="idle")raf=requestAnimationFrame(frame);
  }
- // first paint (title screen)
- g.clearRect(0,0,W,H);scene();bowler(0);batsman(0);
- const wrap=$("#ckWrap");
- wrap.addEventListener("pointerdown",e=>{if(e.target.closest("#ckStart"))return;e.preventDefault();swing(performance.now())});
- $("#ckStart").addEventListener("click",e=>{e.stopPropagation();start()});
- wrap.addEventListener("keydown",e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();swing(performance.now())}});
- document.addEventListener("keydown",e=>{if(e.key!==" "||st==="idle"||st==="over")return;const r=wrap.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0&&!/input|textarea/i.test(e.target.tagName)){e.preventDefault();swing(performance.now())}});
+ function stop(){cancelAnimationFrame(raf);st="idle"}
+ function mount(){stop();runs=0;wk=0;balls=0;log=[];hud();bails=null;fly=null;fielder=null;ball=null;swingAt=-1;g.clearRect(0,0,W,H);scene();bowler(0);batsman(0)}
+ return {start,stop,mount,input(ev){if(ev.type==="tap"||ev.key===" "||ev.key==="Enter")swing(performance.now())},running:()=>st!=="idle"&&st!=="over"};
+}
+
+/* ================= pixel arcade: game of the day ================= */
+const ARC=(function(){
+ const cv=$("#ck"),g=cv.getContext("2d"),W=192,H=96;
+ const R=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),w,h)};
+ const call=t=>{const c=$("#ckCall");c.textContent=t;c.classList.remove("show");void c.offsetWidth;c.classList.add("show")};
+ const getBest=id=>{try{return +localStorage.getItem("bd-arc-"+id)||0}catch(e){return 0}};
+ const setBest=(id,v)=>{try{localStorage.setItem("bd-arc-"+id,v)}catch(e){}};
+ const hud=(a,b)=>{$("#ckR").textContent=a;$("#ckB").textContent=b};
+ function over(id,score,line){const b=getBest(id),nb=score>b;if(nb){setBest(id,score);$("#ckBest").textContent=score}
+  $("#ckMsg").innerHTML=`${line}<br>${nb?"NEW BEST!":"Best: "+Math.max(b,score)}`;$("#ckStart").textContent="AGAIN ▶";$("#ckOver").hidden=false}
+ return {cv,g,W,H,R,call,getBest,hud,over};
 })();
+
+/* ---- Bangalore Rush: dodge the traffic ---- */
+function makeRush(){
+ const {g,W,H,R,call,hud,over}=ARC,LANES=[40,57,74];
+ let st="idle",raf=0,last=0,lane=1,py=57,obs=[],coins=[],dist=0,got=0,spawnT=0,coinT=0,speed=1.4,skyX=0,dash=0;
+ const sky=[];for(let i=0;i<14;i++)sky.push([i*16+(Math.random()*6|0),6+(Math.random()*10|0),8+(Math.random()*6|0)]);
+ const TYPES=[{w:14,h:8,c:"#e5462f",k:"car"},{w:14,h:8,c:"#2d5bd7",k:"car"},{w:11,h:9,c:"#2fa36b",k:"tomtom"},{w:24,h:10,c:"#ffd23f",k:"bus"},{w:12,h:8,c:"#f6efe1",k:"cow"}];
+ function scene(){
+  R(0,0,W,22,"#ffd2a6");R(0,0,W,6,"#ffbf86");
+  sky.forEach(([x,h,w])=>{const xx=((x-skyX)%(W+20)+W+20)%(W+20)-10;R(xx,22-h,w,h,"#9b7fc4")});
+  R(0,22,W,8,"#3e9b6b");R(0,30,W,54,"#4a4a52");R(0,30,W,2,"#fff");R(0,82,W,2,"#fff");R(0,84,W,12,"#3e9b6b");
+  for(let x=-(dash%16);x<W;x+=16){R(x,48,8,1,"#ffd23f");R(x,65,8,1,"#ffd23f")}
+ }
+ function car(x,y,c){R(x,y-4,14,8,c);R(x+3,y-6,7,3,c);R(x+4,y-5,5,2,"#bfe3ff");R(x+1,y+3,3,2,"#111");R(x+10,y+3,3,2,"#111");R(x+13,y-2,1,2,"#fff6c8")}
+ function draw(o){const y=o.y;
+  if(o.k==="car"){R(o.x,y-4,14,8,o.c);R(o.x+4,y-6,7,3,o.c);R(o.x+5,y-5,5,2,"#bfe3ff");R(o.x+1,y+3,3,2,"#111");R(o.x+10,y+3,3,2,"#111");R(o.x,y-2,1,2,"#ff5a3c")}
+  else if(o.k==="tomtom"){R(o.x,y-5,11,9,o.c);R(o.x+1,y-4,4,4,"#bfe3ff");R(o.x,y+3,11,2,"#ffd23f");R(o.x+1,y+4,2,2,"#111");R(o.x+8,y+4,2,2,"#111")}
+  else if(o.k==="bus"){R(o.x,y-5,24,10,o.c);for(let i=0;i<4;i++)R(o.x+2+i*5,y-3,4,3,"#bfe3ff");R(o.x+2,y+4,3,2,"#111");R(o.x+18,y+4,3,2,"#111")}
+  else{R(o.x,y-3,10,6,o.c);R(o.x+2,y-2,3,2,"#111");R(o.x+6,y,2,2,"#111");R(o.x-2,y-5,3,3,o.c);R(o.x-2,y-6,1,1,"#111");R(o.x+1,y+3,1,2,"#111");R(o.x+8,y+3,1,2,"#111")}}
+ function input(ev){if(st!=="run")return;
+  if(ev.key==="ArrowUp"||ev.key==="w"||ev.key==="W")lane=Math.max(0,lane-1);
+  else if(ev.key==="ArrowDown"||ev.key==="s"||ev.key==="S")lane=Math.min(2,lane+1);
+  else if(ev.type==="tap")lane=ev.y<py?Math.max(0,lane-1):Math.min(2,lane+1)}
+ function start(){obs=[];coins=[];dist=0;got=0;spawnT=55;coinT=30;speed=1.4;lane=1;py=57;st="run";last=performance.now();hud(0,0);loop()}
+ function loop(){cancelAnimationFrame(raf);raf=requestAnimationFrame(frame)}
+ function frame(now){const k=Math.min(3,(now-last)/16.67);last=now;
+  speed=1.4+dist*0.0009;dist+=speed*k;skyX+=speed*.2*k;dash+=speed*k;
+  py+=(LANES[lane]-py)*Math.min(1,.35*k);
+  spawnT-=k;if(spawnT<=0){const t=TYPES[Math.random()*TYPES.length|0];const l=Math.random()*3|0;obs.push({...t,x:W+4,y:LANES[l]});spawnT=Math.max(26,70-dist*0.02)+Math.random()*30}
+  coinT-=k;if(coinT<=0){coins.push({x:W+4,y:LANES[Math.random()*3|0]});coinT=50+Math.random()*60}
+  obs.forEach(o=>o.x-=speed*(o.k==="cow"?.7:1.05)*k);coins.forEach(c=>c.x-=speed*k);
+  obs=obs.filter(o=>o.x>-30);coins=coins.filter(c=>c.x>-6&&!c.got);
+  scene();coins.forEach(c=>{R(c.x,c.y-2,4,4,"#ffd23f");R(c.x+1,c.y-1,2,2,"#e8a400")});obs.forEach(draw);car(24,py,"#ff9ec4");
+  const px=24,pw=14;
+  for(const c of coins)if(c.x<px+pw&&c.x+4>px&&Math.abs(c.y-py)<6){c.got=true;got++}
+  const score=Math.floor(dist/10)+got*10;hud(score,got);
+  for(const o of obs)if(o.x<px+pw-1&&o.x+o.w>px+1&&Math.abs(o.y-py)<7){st="over";call("CRASH!");R(px+6,py-6,4,4,"#ffd23f");return setTimeout(()=>over("rush",score,`${score} pts · ${got} coins`),700)}
+  raf=requestAnimationFrame(frame)}
+ function stop(){cancelAnimationFrame(raf);st="idle"}
+ function mount(){stop();hud(0,0);scene();car(24,57,"#ff9ec4");draw({k:"tomtom",c:"#2fa36b",x:120,y:40});draw({k:"bus",c:"#ffd23f",x:150,y:74})}
+ return {start,stop,mount,input,running:()=>st==="run"};
+}
+
+/* ---- Pixel Snake ---- */
+function makeSnake(){
+ const {g,W,H,R,call,hud,over}=ARC,S=6,CW=W/S,CH=H/S;
+ let st="idle",timer=0,snake=[],dir=[1,0],next=[1,0],food=null,eaten=0,tick=130;
+ function place(){do{food=[1+(Math.random()*(CW-2)|0),1+(Math.random()*(CH-2)|0)]}while(snake.some(([x,y])=>x===food[0]&&y===food[1]))}
+ function draw(){R(0,0,W,H,"#1d3b2a");for(let x=0;x<CW;x++)for(let y=0;y<CH;y++)if((x+y)%2)R(x*S,y*S,S,S,"#21452f");
+  R(0,0,W,2,"#ffd23f");R(0,H-2,W,2,"#ffd23f");R(0,0,2,H,"#ffd23f");R(W-2,0,2,H,"#ffd23f");
+  if(food){const[fx,fy]=food;R(fx*S+1,fy*S+1,4,4,"#ffb52e");R(fx*S+2,fy*S+2,2,2,"#ffd86b");R(fx*S+3,fy*S,2,1,"#3e9b6b")}
+  snake.forEach(([x,y],i)=>{R(x*S,y*S,S,S,i?"#7ee0a1":"#c6ff4a");R(x*S,y*S,S,1,"rgba(0,0,0,.18)")});
+  if(snake.length){const[hx,hy]=snake[0];R(hx*S+(dir[0]>0?4:1),hy*S+(dir[1]>0?4:1),1,1,"#111");R(hx*S+(dir[0]<0?1:4),hy*S+(dir[1]<0?1:4),1,1,"#111")}}
+ function turn(d){if(d[0]===-dir[0]&&d[1]===-dir[1])return;next=d}
+ function input(ev){if(st!=="run")return;const K={ArrowUp:[0,-1],w:[0,-1],W:[0,-1],ArrowDown:[0,1],s:[0,1],S:[0,1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0]};
+  if(ev.key&&K[ev.key])return turn(K[ev.key]);
+  if(ev.type==="tap"){const[hx,hy]=snake[0];const dx=ev.x-(hx*S+3),dy=ev.y-(hy*S+3);
+   if(dir[0]!==0)turn([0,dy<0?-1:1]);else turn([dx<0?-1:1,0])}}
+ function step(){dir=next;const[hx,hy]=snake[0],nx=hx+dir[0],ny=hy+dir[1];
+  if(nx<0||ny<0||nx>=CW||ny>=CH||snake.some(([x,y])=>x===nx&&y===ny)){st="over";draw();call("OUCH!");return setTimeout(()=>over("snake",eaten,`${eaten} mangoes · length ${snake.length}`),650)}
+  snake.unshift([nx,ny]);if(food&&nx===food[0]&&ny===food[1]){eaten++;place();tick=Math.max(65,tick-4);if(eaten%5===0)call("YUM!")}else snake.pop();
+  hud(snake.length,eaten);draw();timer=setTimeout(step,tick)}
+ function start(){snake=[[6,8],[5,8],[4,8],[3,8]];dir=[1,0];next=[1,0];eaten=0;tick=130;place();st="run";hud(4,0);draw();clearTimeout(timer);timer=setTimeout(step,tick)}
+ function stop(){clearTimeout(timer);st="idle"}
+ function mount(){stop();snake=[[9,8],[8,8],[7,8],[6,8],[5,8]];dir=[1,0];food=[20,8];hud(5,0);draw()}
+ return {start,stop,mount,input,running:()=>st==="run"};
+}
+
+/* ---- Paper Plane ---- */
+function makePlane(){
+ const {g,W,H,R,call,hud,over}=ARC;
+ let st="idle",raf=0,last=0,y=44,vy=0,pipes=[],score=0,flaps=0,spawn=0,clouds=[];
+ for(let i=0;i<6;i++)clouds.push([Math.random()*W,6+Math.random()*30,10+Math.random()*12]);
+ function bg(){R(0,0,W,H,"#bfe3ff");R(0,0,W,20,"#a9d4ff");clouds.forEach(([x,cy,w])=>{R(x,cy,w,4,"#fff");R(x+3,cy-2,w-6,2,"#fff")});R(0,88,W,8,"#3e9b6b")}
+ function plane(px,py,tilt){const t=Math.max(-2,Math.min(2,tilt));R(px,py,10,2,"#fff");R(px+2,py-1+t,6,1,"#fff");R(px+3,py+2,5,1,"#d9e2ee");R(px+9,py,2,1,"#e5462f");R(px,py+1,1,1,"#9aa3ad")}
+ function pipe(p){R(p.x,p.gap+p.h,14,88-(p.gap+p.h),"#e5462f");R(p.x-1,p.gap+p.h,16,3,"#c8382b");for(let wy=p.gap+p.h+6;wy<84;wy+=6){R(p.x+3,wy,3,3,"#ffd23f");R(p.x+8,wy,3,3,"#ffd23f")}
+  R(p.x+6,0,2,p.gap,"#231f1a");R(p.x+2,p.gap-8,10,8,"#ff9ec4");R(p.x+4,p.gap-6,6,4,"#ffd23f")}
+ function flap(){vy=-2.1;flaps++}
+ function input(ev){if(st!=="run")return;if(ev.type==="tap"||ev.key===" "||ev.key==="ArrowUp"||ev.key==="w"||ev.key==="W")flap()}
+ function start(){y=44;vy=0;pipes=[];score=0;flaps=0;spawn=20;st="run";last=performance.now();hud(0,0);flap();loop()}
+ function loop(){cancelAnimationFrame(raf);raf=requestAnimationFrame(frame)}
+ function frame(now){const k=Math.min(3,(now-last)/16.67);last=now;
+  vy=Math.min(3,vy+.13*k);y+=vy*k;clouds.forEach(c=>{c[0]-=.3*k;if(c[0]<-24)c[0]=W+4});
+  spawn-=k;if(spawn<=0){pipes.push({x:W+2,gap:12+Math.random()*30,h:34,scored:false});spawn=78}
+  pipes.forEach(p=>p.x-=1.25*k);pipes=pipes.filter(p=>p.x>-20);
+  bg();pipes.forEach(pipe);plane(40,y,vy);
+  for(const p of pipes){if(!p.scored&&p.x+14<40){p.scored=true;score++;if(score%10===0)call("NICE!")}
+   if(40+10>p.x&&40<p.x+14&&(y<p.gap||y+2>p.gap+p.h))return crash()}
+  if(y>86||y<-4)return crash();
+  hud(score,flaps);raf=requestAnimationFrame(frame)}
+ function crash(){st="over";call("BONK!");setTimeout(()=>over("plane",score,`${score} gaps · ${flaps} flaps`),650)}
+ function stop(){cancelAnimationFrame(raf);st="idle"}
+ function mount(){stop();hud(0,0);bg();pipe({x:120,gap:26,h:34});plane(40,44,0)}
+ return {start,stop,mount,input,running:()=>st==="run"};
+}
+
+/* ---- arcade shell: today's pick, chips, shuffle, input ---- */
+(function(){
+ const GAMES=[
+  {id:"cricket",name:"Cricket",tag:"NETS SESSION · PIXEL CRICKET",title:"Face 12 balls. Score big.",how:"Tap the pitch (or press <b>Space</b>) to swing when the ball reaches the bat. Time it right for a six. Miss a straight one and you're bowled. 3 wickets, 2 overs.",labels:["RUNS","BALLS"],ot:"PIXEL<br>CRICKET",make:makeCricket},
+  {id:"rush",name:"Bangalore Rush",tag:"RUSH HOUR · PIXEL RACER",title:"Dodge the traffic.",how:"Tap above or below your car (or <b>↑ / ↓</b>) to switch lanes. Dodge cars, tomtoms, buses and the odd cow, and grab coins on the way.",labels:["SCORE","COINS"],ot:"BANGALORE<br>RUSH",make:makeRush},
+  {id:"snake",name:"Snake",tag:"MANGO SEASON · PIXEL SNAKE",title:"Eat mangoes. Don't bite yourself.",how:"Arrow keys or <b>WASD</b>, or tap where you want to turn. Every mango makes you longer and a little faster.",labels:["LENGTH","MANGOES"],ot:"PIXEL<br>SNAKE",make:makeSnake},
+  {id:"plane",name:"Paper Plane",tag:"KITE SEASON · PAPER PLANE",title:"Fly between the rooftops.",how:"Tap (or press <b>Space</b>) to flap. Glide through the gaps between the rooftops and the kites.",labels:["SCORE","FLAPS"],ot:"PAPER<br>PLANE",make:makePlane},
+ ];
+ const day=new Date().toLocaleDateString("en-CA");let h=0;for(const ch of day)h=(h*31+ch.charCodeAt(0))>>>0;
+ const today=h%GAMES.length,inst={};let idx=today,cur=null;
+ const wrap=$("#ckWrap"),cv=ARC.cv;
+ $("#arcPick").innerHTML=GAMES.map((g,i)=>`<button type="button" data-i="${i}" class="${i===today?"today":""}">${g.name}${i===today?" <em>today</em>":""}</button>`).join("")+`<button type="button" id="arcShuffle" class="shuf">Shuffle ↻</button>`;
+ let played=new Set();try{played=new Set(JSON.parse(localStorage.getItem("bd-arc-played")||"[]"))}catch(e){}
+ function load(i){if(cur)cur.stop();idx=i;const m=GAMES[i];cur=inst[m.id]||(inst[m.id]=m.make());
+  $("#arcTag").textContent=m.tag+(i===today?" · GAME OF THE DAY":"");$("#arcTitle").textContent=m.title;$("#arcHow").innerHTML=m.how;
+  $("#ckL1").textContent=m.labels[0];$("#ckL2").textContent=m.labels[1];
+  $("#ckBest").textContent=m.id==="cricket"?(()=>{try{return +localStorage.getItem("bd-ck-best")||0}catch(e){return 0}})():ARC.getBest(m.id);
+  $("#ckTitle").innerHTML=m.ot;$("#ckMsg").textContent=matchMedia("(pointer:coarse)").matches?"Tap to play":"Click or press Space";$("#ckStart").textContent="PLAY ▶";$("#ckOver").hidden=false;$("#ckLog").innerHTML="";
+  wrap.setAttribute("aria-label",m.name+" game: tap, click or use the keyboard to play");
+  document.querySelectorAll("#arcPick button[data-i]").forEach(b=>b.classList.toggle("on",+b.dataset.i===i));
+  cur.mount()}
+ function startCur(){$("#ckOver").hidden=true;cur.start();played.add(GAMES[idx].id);try{localStorage.setItem("bd-arc-played",JSON.stringify([...played]))}catch(e){}
+  if(played.size===GAMES.length&&typeof egg==="function")egg("arcade","You played every game in the arcade.")}
+ document.querySelectorAll("#arcPick button[data-i]").forEach(b=>b.onclick=()=>load(+b.dataset.i));
+ $("#arcShuffle").onclick=()=>{let n;do{n=Math.random()*GAMES.length|0}while(n===idx);load(n)};
+ $("#ckStart").addEventListener("click",e=>{e.stopPropagation();startCur()});
+ wrap.addEventListener("pointerdown",e=>{if(e.target.closest("#ckStart"))return;e.preventDefault();
+  if(!$("#ckOver").hidden)return startCur();
+  const r=cv.getBoundingClientRect();cur.input({type:"tap",x:(e.clientX-r.left)/r.width*ARC.W,y:(e.clientY-r.top)/r.height*ARC.H})});
+ const KEYS=[" ","Enter","ArrowUp","ArrowDown","ArrowLeft","ArrowRight","w","a","s","d","W","A","S","D"];
+ wrap.addEventListener("keydown",e=>{if(!KEYS.includes(e.key))return;e.preventDefault();e.stopPropagation();
+  if(!$("#ckOver").hidden){if(e.key===" "||e.key==="Enter")startCur();return}cur.input({type:"key",key:e.key})});
+ document.addEventListener("keydown",e=>{if(!KEYS.includes(e.key)||!cur||!cur.running()||/input|textarea/i.test(e.target.tagName))return;
+  const r=wrap.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0){e.preventDefault();cur.input({type:"key",key:e.key})}});
+ load(today);
+})();
+
 
 /* lets iOS Safari show :active press states */
 document.addEventListener("touchstart",()=>{},{passive:true});

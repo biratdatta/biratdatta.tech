@@ -1,14 +1,19 @@
-// Cloudflare Worker entry: /api/guestbook goes to the guestbook API, everything else is a static file from public/.
-import { onRequestGet, onRequestPost, onRequestDelete } from "./functions/api/guestbook.js";
+// Cloudflare Worker entry: /api/* goes to the small APIs, everything else is a static file from public/.
+import * as guestbook from "./functions/api/guestbook.js";
+import * as visits from "./functions/api/visits.js";
 
-const ROUTES = { GET: onRequestGet, POST: onRequestPost, DELETE: onRequestDelete };
+const API = {
+  "/api/guestbook": { GET: guestbook.onRequestGet, POST: guestbook.onRequestPost, DELETE: guestbook.onRequestDelete },
+  "/api/visits": { GET: visits.onRequestGet, POST: visits.onRequestPost },
+};
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    if (url.pathname === "/api/guestbook") {
-      const handler = ROUTES[request.method];
-      if (!handler) return new Response("Method not allowed", { status: 405, headers: { allow: "GET, POST, DELETE" } });
+    const route = API[url.pathname];
+    if (route) {
+      const handler = route[request.method];
+      if (!handler) return new Response("Method not allowed", { status: 405, headers: { allow: Object.keys(route).join(", ") } });
       try {
         return await handler({ request, env, ctx });
       } catch (err) {

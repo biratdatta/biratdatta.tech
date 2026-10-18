@@ -9,6 +9,7 @@ public/            everything that gets served
   media/           photos + bowling clip
   favicon.svg, 404.html, robots.txt, sitemap.xml, _headers
 functions/api/guestbook.js   GET / POST / DELETE notes (Cloudflare D1)
+functions/api/visits.js      live visitor counter (Cloudflare D1)
 schema.sql         guestbook tables + the welcome note
 wrangler.toml      Worker config (assets + D1 binding)
 ```

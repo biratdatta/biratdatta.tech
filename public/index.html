@@ -25,6 +25,25 @@
 .mock .game .tomtom{animation:tomtom 6s ease-in-out infinite}
 @keyframes tomtom{0%,100%{transform:translate(212px,150px)}50%{transform:translate(236px,168px)}}
 @media (prefers-reduced-motion:reduce){.mock .game .tomtom{animation:none}}
+
+/* nav: visible hover, press and focus states (desktop + the mobile menu) */
+.top ul a{position:relative;box-shadow:0 0 0 var(--ink);transition:transform .12s,box-shadow .12s,background .12s,color .12s}
+.top ul a:hover,.top ul a:focus-visible{background:var(--yellow);color:var(--ink);transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink);outline:none}
+.top ul a:active{transform:translate(1px,1px);box-shadow:0 0 0 var(--ink);background:var(--yellow)}
+.top ul a.act{background:var(--ink);color:var(--paper)}
+.top ul a.act:hover{background:var(--ink);color:var(--yellow)}
+.menu:active{transform:translate(1px,1px);box-shadow:0 0 0 var(--ink)}
+.menu[aria-expanded="true"]{background:var(--yellow)}
+@media(max-width:900px){
+  .top ul{gap:8px;padding:12px;min-width:220px}
+  .top ul a{display:flex;justify-content:space-between;align-items:center;font-size:16px;padding:10px 16px}
+  .top ul a::after{content:"→";opacity:0;transform:translateX(-6px);transition:.15s}
+  .top ul a:hover::after,.top ul a:focus-visible::after,.top ul a:active::after,.top ul a.act::after{opacity:1;transform:none}
+  .top ul li:nth-child(odd) a{transform:rotate(-.8deg)}
+  .top ul li:nth-child(even) a{transform:rotate(.8deg)}
+  .top ul li:nth-child(odd) a:hover,.top ul li:nth-child(even) a:hover,.top ul a:focus-visible{transform:translate(-2px,-2px) rotate(0)}
+  .top ul li a:active{transform:translate(1px,1px) rotate(0)}
+}
 </style>
 </head>
 <body>
@@ -1151,8 +1170,9 @@ document.querySelectorAll(".stk").forEach(el=>{let sx,sy,ox,oy;el.addEventListen
  const up=()=>{el.style.transform="";el.removeEventListener("pointermove",mv);el.removeEventListener("pointerup",up)};el.addEventListener("pointermove",mv);el.addEventListener("pointerup",up)})});
 
 /* nav, reveal, to-top */
-$("#menu").onclick=()=>$("#nav").classList.toggle("open");
-document.querySelectorAll("#nav a").forEach(a=>a.onclick=()=>$("#nav").classList.remove("open"));
+$("#menu").setAttribute("aria-expanded","false");$("#menu").onclick=()=>{const o=$("#nav").classList.toggle("open");$("#menu").setAttribute("aria-expanded",o)};
+document.querySelectorAll("#nav a").forEach(a=>a.onclick=()=>setTimeout(()=>{$("#nav").classList.remove("open");$("#menu").setAttribute("aria-expanded","false")},140));
+document.addEventListener("click",e=>{if($("#nav").classList.contains("open")&&!e.target.closest("#nav,#menu")){$("#nav").classList.remove("open");$("#menu").setAttribute("aria-expanded","false")}});
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
 const secs=[...document.querySelectorAll("#nav a")].map(a=>$(a.getAttribute("href")));
@@ -1433,6 +1453,9 @@ bv.addEventListener("ended",()=>{confetti(160);toast("STRIKE! (We'll go with tha
  wrap.addEventListener("keydown",e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();swing(performance.now())}});
  document.addEventListener("keydown",e=>{if(e.key!==" "||st==="idle"||st==="over")return;const r=wrap.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0&&!/input|textarea/i.test(e.target.tagName)){e.preventDefault();swing(performance.now())}});
 })();
+
+/* lets iOS Safari show :active press states */
+document.addEventListener("touchstart",()=>{},{passive:true});
 </script>
 
 </body>

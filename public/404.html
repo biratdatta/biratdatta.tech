@@ -1,4 +1,108 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page not found · Birat Datta</title><link rel="icon" href="/favicon.svg">
-<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6efe1;background-image:linear-gradient(#e7dcc6 1px,transparent 1px),linear-gradient(90deg,#e7dcc6 1px,transparent 1px);background-size:28px 28px;font-family:system-ui,sans-serif;color:#231f1a;text-align:center;padding:16px}
-.c{background:#fff;border:2px solid #231f1a;box-shadow:6px 6px 0 #231f1a;padding:32px 28px;transform:rotate(-1.5deg);max-width:420px}h1{font:900 64px/1 "Arial Black",Impact,sans-serif;margin:0 0 8px}a{display:inline-block;margin-top:16px;background:#ffd23f;border:2px solid #231f1a;box-shadow:3px 3px 0 #231f1a;padding:10px 18px;color:#231f1a;font-weight:700;text-decoration:none}</style></head>
-<body><div class="c"><h1>404</h1><p>This page fell out of the scrapbook.</p><a href="/">Back to the cover →</a></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lost in Bangalore · Birat Datta</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#7cc46a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--grass:#7cc46a;--ink:#231f1a;--paper:#f6efe1;--yellow:#ffd23f;--red:#e5462f;--blue:#2d5bd7;
+ --display:"Archivo Black","Arial Black",Impact,sans-serif;--hand:"Caveat","Bradley Hand","Segoe Print",cursive;--body:"Space Grotesk",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+ padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--grass);color:var(--ink);font-family:var(--body);min-height:100vh;overflow-x:clip;
+ background-image:radial-gradient(rgba(35,31,26,.08) 1.5px,transparent 2px);background-size:22px 22px}
+.wrap{max-width:980px;margin:0 auto;padding:32px max(16px,env(safe-area-inset-left,0px)) 48px max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.code{font:600 13px var(--mono);background:var(--ink);color:var(--yellow);padding:5px 12px;transform:rotate(-2deg);box-shadow:3px 3px 0 rgba(0,0,0,.25)}
+h1{font:clamp(44px,9vw,92px)/.92 var(--display);letter-spacing:-.02em;text-wrap:balance}
+h1 span{display:inline-block;background:var(--ink);color:var(--paper);padding:0 .12em;transform:rotate(-2deg)}
+.line{font:700 clamp(24px,3.6vw,34px)/1.2 var(--hand);max-width:760px;min-height:2.4em;text-wrap:balance}
+.dest{font:600 14px var(--mono);background:#fff;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:8px 14px;display:inline-flex;gap:14px;flex-wrap:wrap;justify-content:center;transform:rotate(1deg)}
+.dest b{color:var(--red);word-break:break-all}
+canvas{display:block;width:100%;aspect-ratio:16/9;max-width:100%;image-rendering:pixelated;border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);background:var(--grass);margin-top:8px}
+.row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.btn{display:inline-block;text-decoration:none;font-weight:700;font-size:16px;padding:13px 22px;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);background:var(--yellow);color:var(--ink);transition:transform .12s,box-shadow .12s}
+.btn:hover,.btn:focus-visible{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);outline:none}
+.btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
+.btn.w{background:#fff}
+.small{font:700 22px var(--hand);opacity:.85;margin-top:4px}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="code">ERROR 404 · PAGE NOT FOUND</div>
+  <h1>LOST IN <span>BANGALORE</span></h1>
+  <p class="line" id="line">Our tomtom driver said "I know a shortcut." That was 45 minutes ago.</p>
+  <div class="dest"><span>DESTINATION: <b id="path">/this-page</b></span><span>ETA: <b>never</b></span></div>
+  <canvas id="map" width="320" height="180" role="img" aria-label="A pixel tomtom driving around a little map of Bangalore, unable to find the page"></canvas>
+  <div class="row"><a class="btn" href="/">Take the tomtom home →</a><a class="btn w" href="/writing/">Read my field notes instead</a></div>
+  <p class="small">meter's off, no charge for the detour ♡</p>
+</main>
+<script>
+(function(){
+ const path=decodeURIComponent(location.pathname)||"/";
+ document.getElementById("path").textContent=path.length>40?path.slice(0,38)+"…":path;
+ const LINES=[
+  `Our tomtom driver said "I know a shortcut." That was 45 minutes ago.`,
+  `We took the Silk Board route. This page is still stuck in traffic.`,
+  `Driver says: "Meter? No meter, sir." Also: no page.`,
+  `Searched Koramangala, Indiranagar and HSR. Found 14 cafés and 0 pages.`,
+  `Maps says this page is 2 km away. It has said that for an hour.`,
+  `"Ek minute, sir, almost there." — the driver, for the ninth time.`,
+  `The page left for Goa on a long weekend. It didn't say when it's coming back.`,
+  `We asked a cow for directions. It refused to move. Neither did we.`,
+ ];
+ const el=document.getElementById("line");let li=Math.random()*LINES.length|0;el.textContent=LINES[li];
+ setInterval(()=>{li=(li+1)%LINES.length;el.textContent=LINES[li]},6000);
+
+ const cv=document.getElementById("map"),g=cv.getContext("2d"),W=320,H=180;
+ const R=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),w,h)};
+ const ROUTE=[[-20,40],[150,40],[150,112],[262,112],[262,40],[340,40]];
+ const segs=[];let L=0;for(let i=0;i<ROUTE.length-1;i++){const a=ROUTE[i],b=ROUTE[i+1],l=Math.hypot(b[0]-a[0],b[1]-a[1]);segs.push([a,b,l]);L+=l}
+ function at(s){let d=((s%L)+L)%L;for(const[a,b,l]of segs){if(d<=l){const k=d/l;return[a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k,Math.atan2(b[1]-a[1],b[0]-a[0])]}d-=l}return[0,0,0]}
+ const onRoad=(x,y)=>(Math.abs(y-40)<14)||(Math.abs(y-112)<14&&x>140&&x<272)||(Math.abs(x-150)<14&&y>30&&y<122)||(Math.abs(x-262)<14&&y>30&&y<122);
+ const houses=[];let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+ for(let i=0;i<60&&houses.length<30;i++){const x=rnd()*(W-14),y=rnd()*(H-14);if(!onRoad(x+6,y+5)&&!(x<100&&y>132))houses.push([x,y,["#e5462f","#ffd23f","#f6efe1","#ff9ec4","#bfe3ff","#b9a6ff"][houses.length%6]])}
+ const trees=[];for(let i=0;i<40&&trees.length<16;i++){const x=rnd()*W,y=rnd()*H;if(!onRoad(x,y))trees.push([x,y])}
+ const BUBBLES=["shortcut!","ek minute","left? right?","U-turn","sir, 2 mins","traffic…","100 rupees extra"];
+ const cars=[{s:0,c:"#2d5bd7",v:.9},{s:L*.55,c:"#e5462f",v:.7}];
+ let t=60,lap=0,last=performance.now(),bub=0,bubT=0;
+ function tomtom(x,y,a,body){g.save();g.translate(x,y);g.rotate(a);R(-9,-6,18,12,body);R(3,-5,5,10,"#bfe3ff");R(-9,5,18,2,"#ffd23f");R(-7,-8,3,2,"#111");R(-7,6,3,2,"#111");R(5,-8,3,2,"#111");R(5,6,3,2,"#111");g.restore()}
+ function car(x,y,a,c){g.save();g.translate(x,y);g.rotate(a);R(-7,-4,14,8,c);R(1,-3,4,6,"#bfe3ff");g.restore()}
+ function label(x,y,txt,bg){g.font="bold 7px monospace";const w=g.measureText(txt).width+8;R(x,y,w,12,bg);g.strokeStyle="#231f1a";g.lineWidth=1.5;g.strokeRect(x+.5,y+.5,w-1,11);g.fillStyle="#231f1a";g.fillText(txt,x+4,y+9);return w}
+ function draw(){
+  R(0,0,W,H,"#7cc46a");
+  for(let x=0;x<W;x+=8)for(let y=0;y<H;y+=8)if((x*7+y*13)%23===0)R(x,y,1,1,"#5fa74f");
+  R(18,136,70,30,"#4aa3d8");R(22,140,62,2,"#8cc9ee");label(26,150,"ULSOOR LAKE","#fff");
+  trees.forEach(([x,y])=>{R(x-1,y,2,4,"#6b4a2b");R(x-4,y-6,8,7,"#3e9b6b")});
+  houses.forEach(([x,y,c])=>{R(x,y,12,10,c);R(x,y,12,3,"#8a5a2b");R(x+4,y+5,3,5,"#231f1a")});
+  g.lineCap="square";g.strokeStyle="#4a4a52";g.lineWidth=16;g.beginPath();ROUTE.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.stroke();
+  g.strokeStyle="#ffd23f";g.lineWidth=1;g.setLineDash([5,6]);g.beginPath();ROUTE.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.stroke();g.setLineDash([]);
+  label(156,18,"SILK BOARD JN.","#ffd23f");label(270,68,"404 NAGAR?","#fff");R(276,80,2,10,"#231f1a");
+  // the cow that refuses to move
+  const cx=206,cy=118;R(cx,cy-4,10,6,"#f6efe1");R(cx+2,cy-3,3,2,"#231f1a");R(cx+6,cy-1,2,2,"#231f1a");R(cx-3,cy-6,4,4,"#f6efe1");R(cx-3,cy-7,1,1,"#231f1a");R(cx+1,cy+2,1,3,"#231f1a");R(cx+8,cy+2,1,3,"#231f1a");
+  cars.forEach(c=>{const[x,y,a]=at(c.s);car(x,y,a,c.c)});
+  const[x,y,a]=at(t);tomtom(x,y,a,"#2fa36b");
+  if(lap%2===1){const w=label(Math.min(W-60,Math.max(2,x-26)),y-30,"HOME THIS WAY →","#fff")}
+  else if(bubT>0){label(Math.min(W-70,Math.max(2,x-20)),y-28,BUBBLES[bub],"#fff")}
+ }
+ function frame(now){const k=Math.min(3,(now-last)/16.67);last=now;
+  const near=Math.hypot(at(t)[0]-206,at(t)[1]-118)<26;
+  t+=(near?.35:1.1)*k; // slows down for the cow
+  if(t>L*(lap+1))lap++;
+  cars.forEach(c=>c.s+=c.v*k);
+  bubT-=k;if(bubT<-180){bub=Math.random()*BUBBLES.length|0;bubT=110}
+  draw();raf=requestAnimationFrame(frame)}
+ let raf;
+ if(matchMedia("(prefers-reduced-motion: reduce)").matches)draw();else raf=requestAnimationFrame(frame);
+ document.addEventListener("visibilitychange",()=>{if(document.hidden)cancelAnimationFrame(raf);else{last=performance.now();raf=requestAnimationFrame(frame)}});
+})();
+</script>
+</body>
+</html>

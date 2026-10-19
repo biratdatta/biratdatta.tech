@@ -754,7 +754,7 @@ footer b[data-visits]{font-variant-numeric:tabular-nums}
       <li><a href="#projects">Projects</a></li>
       <li><a href="#journey">Journey</a></li>
       <li><a href="#community">Community</a></li>
-      <li><a href="#snaps">Snaps</a></li><li><a href="#notes">Notes</a></li><li><a href="#more">More me</a></li>
+      <li><a href="#more">More me</a></li><li><a href="#snaps">Snaps</a></li><li><a href="#notes">Notes</a></li>
       <li><a href="#contact">Say hi</a></li>
     </ul>
   </div>
@@ -1228,7 +1228,13 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.targ
 document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
 const secs=[...document.querySelectorAll("#nav a")].map(a=>$(a.getAttribute("href")));
 addEventListener("scroll",()=>{const y=scrollY;$("#top").classList.toggle("scrolled",y>40);$("#totop").classList.toggle("show",y>900);
- let cur=null;secs.forEach(s=>{if(s&&s.getBoundingClientRect().top<140)cur=s.id});document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("act",a.getAttribute("href")==="#"+cur))},{passive:true});
+ hl()},{passive:true});
+/* highlight the menu item for the section actually on screen; sections without a menu item (toy box, toolbox...) highlight nothing */
+const allSecs=[...document.querySelectorAll("section.s, section.last")];
+function hl(){const line=innerHeight*0.35;let cur=null;for(const s of allSecs){const r=s.getBoundingClientRect();if(r.top<=line&&r.bottom>line){cur=s.id||null;break}}
+ if(innerHeight+scrollY>=document.documentElement.scrollHeight-4)cur="contact";
+ document.querySelectorAll("#nav a").forEach(a=>{const on=!!cur&&a.getAttribute("href")==="#"+cur;a.classList.toggle("act",on);on?a.setAttribute("aria-current","true"):a.removeAttribute("aria-current")})}
+addEventListener("resize",hl);hl();
 
 /* ================= easter eggs & toys ================= */
 const EGGS=[

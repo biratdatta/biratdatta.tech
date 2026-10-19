@@ -1,10 +1,12 @@
 // Cloudflare Worker entry: /api/* goes to the small APIs, everything else is a static file from public/.
 import * as guestbook from "./functions/api/guestbook.js";
 import * as visits from "./functions/api/visits.js";
+import * as posts from "./functions/api/posts.js";
 
 const API = {
   "/api/guestbook": { GET: guestbook.onRequestGet, POST: guestbook.onRequestPost, DELETE: guestbook.onRequestDelete },
   "/api/visits": { GET: visits.onRequestGet, POST: visits.onRequestPost },
+  "/api/posts": { GET: posts.onRequestGet },
 };
 
 export default {

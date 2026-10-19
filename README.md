@@ -10,6 +10,8 @@ public/            everything that gets served
   favicon.svg, 404.html, robots.txt, sitemap.xml, _headers
 functions/api/guestbook.js   GET / POST / DELETE notes (Cloudflare D1)
 functions/api/visits.js      live visitor counter (Cloudflare D1)
+functions/api/posts.js       your Medium articles (RSS, cached 30 min)
+public/writing/    the /writing page: all articles + a reader view
 schema.sql         guestbook tables + the welcome note
 wrangler.toml      Worker config (assets + D1 binding)
 ```

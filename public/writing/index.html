@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Field Notes · Birat Datta</title>
+<meta name="description" content="Everything Birat Datta writes: notes on AI agents, web components, design systems and building on the web.">
+<link rel="canonical" href="https://biratdatta.tech/writing/">
+<meta name="theme-color" content="#f6efe1">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://biratdatta.tech/writing/">
+<meta property="og:title" content="Field Notes · Birat Datta">
+<meta property="og:description" content="Notes on AI agents, web components, design systems and building on the web.">
+<meta property="og:image" content="https://biratdatta.tech/media/og-card.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@biratdatta1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="Birat Datta on Medium" href="https://medium.com/feed/@birat.datta26">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@500;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+/* Layout: grid-paper notebook; list of article cards, and a calm reader view for one article. */
+:root{--paper:#f6efe1;--ink:#231f1a;--red:#e5462f;--blue:#2d5bd7;--yellow:#ffd23f;--green:#3e9b6b;--pink:#ff9ec4;--sky:#bfe3ff;--muted:#6b6157;
+  --display:"Archivo Black","Arial Black",Impact,sans-serif;--hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+  --body:"Space Grotesk",ui-sans-serif,system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;--read:"Literata",Georgia,"Times New Roman",serif;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);overflow-x:clip;
+  background-image:linear-gradient(#e7dcc6 1px,transparent 1px),linear-gradient(90deg,#e7dcc6 1px,transparent 1px);background-size:28px 28px}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding:14px 0;background:rgba(246,239,225,.92);backdrop-filter:blur(8px);box-shadow:0 2px 0 var(--ink)}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font:700 24px var(--hand);background:var(--yellow);padding:2px 12px;transform:rotate(-3deg);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);text-decoration:none}
+.pill{text-decoration:none;font-weight:600;font-size:14px;padding:7px 14px;border:2px solid var(--ink);border-radius:999px;background:#fff;transition:.12s}
+.pill:hover,.pill:focus-visible{background:var(--yellow);transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink);outline:none}
+.hero{padding:56px 0 30px}
+.hero small{font:600 12px var(--mono);color:var(--red);letter-spacing:.06em}
+.hero h1{font:clamp(48px,9vw,110px)/.88 var(--display);letter-spacing:-.02em;margin:10px 0 14px;text-wrap:balance}
+.hero h1 span{display:inline-block;background:var(--ink);color:var(--paper);padding:0 .12em;transform:rotate(-1.5deg)}
+.hero p{font-size:18px;line-height:1.55;max-width:620px}
+.hero .hand{font:700 26px var(--hand);color:var(--blue);display:inline-block;transform:rotate(-2deg);margin-top:8px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:26px 0 30px}
+.tools input{font:500 16px var(--body);padding:10px 14px;border:2px solid var(--ink);background:#fff;box-shadow:3px 3px 0 var(--ink);min-width:0;flex:1 1 220px;max-width:340px}
+.tools input:focus{outline:3px solid var(--blue);outline-offset:2px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{all:unset;cursor:pointer;font:600 12px var(--mono);padding:6px 11px;border:2px solid var(--ink);border-radius:999px;background:#fff;transition:.12s}
+.chips button:hover,.chips button:focus-visible{background:#fffbe0}
+.chips button.on{background:var(--ink);color:var(--paper)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:30px;padding-bottom:90px}
+.card{display:flex;flex-direction:column;background:#fff;border:2px solid var(--ink);box-shadow:5px 5px 0 var(--ink);text-decoration:none;transition:transform .15s,box-shadow .15s;position:relative;cursor:pointer}
+.card:nth-child(3n+1){transform:rotate(-.8deg)}.card:nth-child(3n+2){transform:rotate(.6deg)}.card:nth-child(3n){transform:rotate(-.3deg)}
+.card:hover,.card:focus-visible{transform:rotate(0) translate(-3px,-3px);box-shadow:8px 8px 0 var(--red);outline:none}
+.card .im{aspect-ratio:16/9;background:var(--sky);border-bottom:2px solid var(--ink);overflow:hidden;max-width:100%}
+.card .im img{width:100%;height:100%;object-fit:cover}
+.card .im.none{display:grid;place-items:center;font:700 42px var(--hand);color:var(--ink);background:repeating-linear-gradient(45deg,#fffbe0 0 14px,#fff6c8 14px 28px)}
+.card .bd{padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card .meta{display:flex;justify-content:space-between;gap:8px;font:600 12px var(--mono);color:var(--muted)}
+.card h2{font:23px/1.08 var(--display);text-wrap:balance}
+.card p{font-size:15px;line-height:1.5;flex:1}
+.card .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.card .tags span{font:600 11px var(--mono);padding:3px 8px;background:#eef3ff;border:1.5px solid var(--ink);border-radius:999px}
+.card .new{position:absolute;top:-12px;right:14px;background:var(--red);color:#fff;font:700 12px var(--mono);padding:4px 9px;border:2px solid var(--ink);transform:rotate(6deg)}
+.state{font:700 26px var(--hand);color:var(--blue);padding:30px 0 90px}
+.skel{height:330px;background:linear-gradient(90deg,#fff 0,#fffbe9 50%,#fff 100%);background-size:200% 100%;border:2px dashed #c9bfae;animation:sk 1.2s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+/* reader */
+.reader{max-width:720px;margin:0 auto;padding:40px 0 100px}
+.back{display:inline-flex;gap:8px;align-items:center;font:700 22px var(--hand);color:var(--blue);text-decoration:none;border-bottom:2px dashed var(--blue);margin-bottom:24px}
+.back:hover{color:var(--red);border-color:var(--red)}
+.paper{background:#fffdf6;border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:clamp(22px,5vw,56px)}
+.paper .meta{font:600 12px var(--mono);color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.paper h1{font:clamp(30px,5vw,48px)/1.05 var(--display);text-wrap:balance;margin-bottom:22px}
+.prose{font:400 19px/1.75 var(--read);color:#2b2620}
+.prose>*+*{margin-top:1.1em}
+.prose h3,.prose h4{font:22px/1.2 var(--display);margin-top:1.8em;color:var(--ink)}
+.prose h4{font-size:18px}
+.prose a{color:var(--blue);text-underline-offset:3px}
+.prose img{margin:0 auto;border:2px solid var(--ink)}
+.prose figure{margin:1.6em 0}
+.prose figcaption{font:500 14px var(--body);color:var(--muted);text-align:center;margin-top:8px}
+.prose blockquote{border-left:4px solid var(--red);padding:4px 0 4px 18px;font-style:italic;color:#4a433b}
+.prose pre{background:#1f1f24;color:#e8e6e3;padding:16px 18px;overflow-x:auto;font:14px/1.6 var(--mono);border-radius:4px;white-space:pre}
+.prose code{font:0.88em var(--mono);background:#f1ece2;padding:1px 5px;border-radius:3px}
+.prose pre code{background:none;padding:0;font:inherit}
+.prose ul,.prose ol{padding-left:1.3em}
+.prose li+li{margin-top:.4em}
+.prose hr{border:0;text-align:center;height:24px}
+.prose hr::before{content:"✦ ✦ ✦";color:var(--muted);letter-spacing:.6em}
+.orig{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;border-top:2px dashed #c9bfae;padding-top:18px;font-size:15px}
+.btn{display:inline-block;text-decoration:none;font-weight:700;padding:11px 18px;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);background:var(--yellow);transition:.12s}
+.btn:hover,.btn:focus-visible{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);outline:none}
+footer{border-top:2px solid var(--ink);padding:22px 0 30px;font:600 12px var(--mono)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:640px){.hero{padding-top:34px}.prose{font-size:17.5px}.card h2{font-size:21px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="/">BD!</a><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="pill" href="/#notes">← Scrapbook</a><a class="pill" href="https://medium.com/@birat.datta26" target="_blank" rel="noopener">Medium ↗</a></div></div></header>
+
+<main id="list" class="wrap">
+  <section class="hero">
+    <small>✦ birat/field-notes</small>
+    <h1>FIELD<br><span>NOTES</span></h1>
+    <p>Everything I write, in one place: AI agents, web components, design systems, and the occasional hackathon diary. New posts show up here on their own as soon as I publish them.</p>
+    <span class="hand">grab a coffee, pick a page ↓</span>
+  </section>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Search articles…" aria-label="Search articles">
+    <div class="chips" id="chips" role="group" aria-label="Filter by topic"></div>
+  </div>
+  <div class="grid" id="grid" aria-live="polite"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+</main>
+
+<main id="read" class="wrap" hidden>
+  <article class="reader">
+    <a class="back" href="/writing/">← all field notes</a>
+    <div class="paper">
+      <div class="meta" id="rMeta"></div>
+      <h1 id="rTitle"></h1>
+      <div class="prose" id="rBody"></div>
+      <div class="orig"><span id="rOrig">Originally published on Medium.</span><a class="btn" id="rLink" href="#" target="_blank" rel="noopener">Read it on Medium ↗</a></div>
+    </div>
+  </article>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Birat Datta · field notes, pulled fresh from Medium</span><a href="/">back to the scrapbook ↑</a></div></footer>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=d=>new Date(d).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});
+let posts=[],tag="all";
+function card(p,i){const fresh=Date.now()-new Date(p.date)<14*864e5;
+ return `<a class="card" href="/writing/?p=${encodeURIComponent(p.slug)}" data-slug="${esc(p.slug)}">${fresh?'<span class="new">NEW</span>':""}
+  <div class="im${p.image?"":" none"}">${p.image?`<img src="${esc(p.image)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('none');this.replaceWith('✎')">`:"✎"}</div>
+  <div class="bd"><div class="meta"><span>${fmt(p.date)}</span><span>${p.mins} min read</span></div><h2>${esc(p.title)}</h2><p>${esc(p.excerpt)}</p>
+  <div class="tags">${p.tags.slice(0,3).map(t=>`<span>${esc(t.replace(/-/g," "))}</span>`).join("")}</div></div></a>`}
+function render(){const q=$("#q").value.trim().toLowerCase();
+ const list=posts.filter(p=>(tag==="all"||p.tags.includes(tag))&&(!q||(p.title+" "+p.excerpt+" "+p.tags.join(" ")).toLowerCase().includes(q)));
+ $("#grid").innerHTML=list.length?list.map(card).join(""):`<div class="state">Nothing matches that yet. Try another word.</div>`}
+function chips(){const count={};posts.forEach(p=>p.tags.forEach(t=>count[t]=(count[t]||0)+1));
+ const top=Object.entries(count).sort((a,b)=>b[1]-a[1]).slice(0,8).map(e=>e[0]);
+ $("#chips").innerHTML=["all",...top].map(t=>`<button type="button" data-t="${esc(t)}" class="${t===tag?"on":""}">${t==="all"?"All":esc(t.replace(/-/g," "))}</button>`).join("");
+ $("#chips").querySelectorAll("button").forEach(b=>b.onclick=()=>{tag=b.dataset.t;chips();render()})}
+async function list(){try{const r=await fetch("/api/posts");if(!r.ok)throw 0;posts=(await r.json()).posts||[];chips();render()}
+ catch(e){$("#grid").innerHTML=`<div class="state">Couldn't load the articles right now. You can read them on <a href="https://medium.com/@birat.datta26">Medium</a>.</div>`}}
+async function open(slug){$("#list").hidden=true;$("#read").hidden=false;scrollTo(0,0);$("#rTitle").textContent="Loading…";$("#rBody").innerHTML="";$("#rMeta").textContent="";
+ try{const r=await fetch("/api/posts?slug="+encodeURIComponent(slug));if(!r.ok)throw 0;const p=(await r.json()).post;
+  document.title=p.title+" · Birat Datta";$("#rTitle").textContent=p.title;$("#rMeta").innerHTML=`<span>${fmt(p.date)}</span><span>· ${p.mins} min read</span>${p.tags.slice(0,3).map(t=>`<span>· ${esc(t.replace(/-/g," "))}</span>`).join("")}`;
+  $("#rBody").innerHTML=p.html;const fp=$("#rBody").querySelector("p");if(fp&&/^\w{3} \d{1,2}, \d{4} ·/.test(fp.textContent.trim()))fp.remove();$("#rBody").querySelectorAll("img").forEach(im=>im.onerror=()=>{(im.closest("figure")||im).remove()});$("#rLink").href=p.link;
+  let c=document.querySelector('link[rel=canonical]');c.href=p.link;}
+ catch(e){$("#rTitle").textContent="This article couldn't be loaded.";$("#rBody").innerHTML='<p>Head back to the list, or find it on <a href="https://medium.com/@birat.datta26">Medium</a>.</p>'}}
+function route(){const slug=new URLSearchParams(location.search).get("p");
+ if(slug)open(slug);else{$("#read").hidden=true;$("#list").hidden=false;document.title="Field Notes · Birat Datta";document.querySelector('link[rel=canonical]').href="https://biratdatta.tech/writing/";if(!posts.length)list()}}
+document.addEventListener("click",e=>{const a=e.target.closest("a.card,a.back");if(!a||e.metaKey||e.ctrlKey)return;e.preventDefault();history.pushState(null,"",a.getAttribute("href"));route()});
+addEventListener("popstate",route);
+$("#q").addEventListener("input",render);
+route();
+</script>
+</body>
+</html>

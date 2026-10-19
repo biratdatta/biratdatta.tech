@@ -1070,12 +1070,12 @@ footer b[data-visits]{font-variant-numeric:tabular-nums}
   <section class="s reveal sec bg-cream pat-grid al-right" id="notes">
     <div class="sh"><div><span class="path">birat/field-notes</span><h2>NOTES FROM<br><span class="hi">THE FIELD</span></h2></div><span class="hand">what I've learned building tools</span>
       <p>Things I've written on Medium and in Tutorial Savvy, from hackathon diaries to how AI agents use (and remember) software.</p></div>
-    <div class="notes">
+    <div class="notes" id="notesGrid">
       <a class="fn" href="https://tutorialsavvy.com/ax-is-the-new-ux-5ce22f7268bc" target="_blank" rel="noopener"><span class="stamp">NEW</span><div class="tg"><span>Agents</span><span>6 min · Oct 2026</span></div><h3>AX Is the New UX</h3><p>Your next most important user will never see your homepage. What Agent Experience is, and six principles for building products AI agents can use on the first try.</p><blockquote>“How would an agent use this?”</blockquote></a>
       <a class="fn" href="https://tutorialsavvy.com/claude-is-learning-to-sleep-a-deep-dive-into-dreaming-memory-decay-and-how-ai-agents-keep-12387fe547dc" target="_blank" rel="noopener"><div class="tg"><span>AI memory</span><span>9 min · Oct 2026</span></div><h3>Claude Is Learning to Sleep</h3><p>A deep dive into “dreaming”: how AI coding agents consolidate, prune and re-index their memory so it stays useful instead of turning into noise.</p><blockquote>“The hard part of memory isn't storage, it's curation.”</blockquote></a>
       <a class="fn" href="https://medium.com/@birat.datta26/selected-for-smart-india-hackathon-grand-finale-885f2cfcdd8f" target="_blank" rel="noopener"><div class="tg"><span>Hackathons</span><span>Jul 2022</span></div><h3>Selected for the Smart India Hackathon Grand Finale</h3><p>My team 4not4 made the SIH 2022 finals, with me leading it in my first year of college. Where the runner-up story started.</p><blockquote>“Proud that I'm leading a team in my first year.”</blockquote></a>
     </div>
-    <div class="turnwrap"><a class="turn" href="#more">Turn the page ↓</a></div>
+    <div class="turnwrap" style="display:flex;gap:18px;justify-content:center;align-items:center;flex-wrap:wrap"><a class="btn" href="/writing/">Read all field notes →</a><a class="turn" href="#more" style="margin-top:0">Turn the page ↓</a></div>
   </section>
 </div>
 
@@ -1832,6 +1832,13 @@ document.addEventListener("touchstart",()=>{},{passive:true});
  hit(first?"POST":"GET").then(ok=>{if(ok&&first)try{localStorage.setItem("bd-visited","1")}catch(e){}});
  setInterval(()=>{if(!document.hidden)hit("GET")},30000);
 })();
+
+/* field notes: latest 3 posts from Medium (falls back to the cards already in the page) */
+(async function(){const g=document.getElementById("notesGrid");if(!g)return;
+ try{const r=await fetch("/api/posts");if(!r.ok)return;const d=await r.json();const ps=(d.posts||[]).slice(0,3);if(!ps.length)return;
+  const fmt=x=>new Date(x).toLocaleDateString(undefined,{month:"short",year:"numeric"});
+  g.innerHTML=ps.map((p,i)=>`<a class="fn" href="/writing/?p=${encodeURIComponent(p.slug)}">${i===0&&Date.now()-new Date(p.date)<14*864e5?'<span class="stamp">NEW</span>':""}<div class="tg"><span>${esc((p.tags[0]||"notes").replace(/-/g," "))}</span><span>${p.mins} min · ${fmt(p.date)}</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></a>`).join("");
+ }catch(e){}})();
 </script>
 
 </body>
